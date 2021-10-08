@@ -3,7 +3,7 @@ You have been hired by Super*Duper*Drive, which is a brand new company aiming to
 
 1. **Simple File Storage:** Upload/download/remove files
 2. **Note Management:** Add/update/remove text notes
-3. **Password Management:** Save, edit, and delete website credentials.  
+3. **Password Management:** Save, edit, and delete website credential.  
 
 Super*Duper*Drive wants you to focus on building the web application with the skills you acquired in this course. That means you are responsible for developing the server, website, and tests, but other tasks like deployment belong to other teams at the company. 
 
@@ -29,7 +29,7 @@ The back-end is all about security and connecting the front-end to database data
 1. Managing user access with Spring Security
  - You have to restrict unauthorized users from accessing pages other than the login and signup pages. To do this, you must create a security configuration class that extends the `WebSecurityConfigurerAdapter` class from Spring. Place this class in a package reserved for security and configuration. Often this package is called `security` or `config`.
  - Spring Boot has built-in support for handling calls to the `/login` and `/logout` endpoints. You have to use the security configuration to override the default login page with one of your own, discussed in the front-end section.
- - You also need to implement a custom `AuthenticationProvider` which authorizes user logins by matching their credentials against those stored in the database.  
+ - You also need to implement a custom `AuthenticationProvider` which authorizes user logins by matching their credential against those stored in the database.  
 
 
 2. Handling front-end calls with controllers
@@ -74,8 +74,8 @@ The home page is the center of the application and hosts the three required piec
   - The user should be able to edit or delete previously-created notes.
 
  iii. Credentials
- - The user should be able to store credentials for specific websites and see a list of the credentials they've previously stored. If you display passwords in this list, make sure they're encrypted!
- - The user should be able to view/edit or delete individual credentials. When the user views the credential, they should be able to see the unencrypted password.
+ - The user should be able to store credential for specific websites and see a list of the credential they've previously stored. If you display passwords in this list, make sure they're encrypted!
+ - The user should be able to view/edit or delete individual credential. When the user views the credential, they should be able to see the unencrypted password.
 
 The home page should have a logout button that allows the user to logout of the application and keep their data private.
 
@@ -94,13 +94,13 @@ Your tech lead trusts you to do a good job, but testing is important whether you
 
 
 3. Write tests for credential creation, viewing, editing, and deletion.
- - Write a test that creates a set of credentials, verifies that they are displayed, and verifies that the displayed password is encrypted.
- - Write a test that views an existing set of credentials, verifies that the viewable password is unencrypted, edits the credentials, and verifies that the changes are displayed.
- - Write a test that deletes an existing set of credentials and verifies that the credentials are no longer displayed.
+ - Write a test that creates a set of credential, verifies that they are displayed, and verifies that the displayed password is encrypted.
+ - Write a test that views an existing set of credential, verifies that the viewable password is unencrypted, edits the credential, and verifies that the changes are displayed.
+ - Write a test that deletes an existing set of credential and verifies that the credential are no longer displayed.
 
 ## Final Tips and Tricks
 ### Password Security
-Make sure not to save the plain text credentials of the application's users in the database. That's a recipe for data breach disaster! Use a hashing function to store a scrambled version instead. Your tech lead gave you a class called `HashService` that can hash passwords for you. When the user signs up, you only store a hashed version of their password in the database, and on login, you hash the password attempt before comparing it with the hashed password in the database. Your tech lead knows that can be a little confusing, so they provided this code sample to help illustrate the idea:
+Make sure not to save the plain text credential of the application's users in the database. That's a recipe for data breach disaster! Use a hashing function to store a scrambled version instead. Your tech lead gave you a class called `HashService` that can hash passwords for you. When the user signs up, you only store a hashed version of their password in the database, and on login, you hash the password attempt before comparing it with the hashed password in the database. Your tech lead knows that can be a little confusing, so they provided this code sample to help illustrate the idea:
 
 ```
 byte[] salt = new byte[16];
@@ -110,7 +110,7 @@ String hashedPassword = hashService.getHashedValue(plainPassword, encodedSalt);
 return hashedPassword;
 ```
 
-For storing credentials in the main part of the application, we can't hash passwords because it's a one-way operation. The user needs access to the unhashed password, after all! So instead, you should encrypt the passwords. Your tech lead provided you with a class called `EncryptionService` that can encrypt and decrypt passwords. When a user adds new credentials, encrypt the password before storing it in the database. When the user views those credentials, decrypt the password before displaying it. Here's a little code snippet on how to use `EncryptionService`:
+For storing credential in the main part of the application, we can't hash passwords because it's a one-way operation. The user needs access to the unhashed password, after all! So instead, you should encrypt the passwords. Your tech lead provided you with a class called `EncryptionService` that can encrypt and decrypt passwords. When a user adds new credential, encrypt the password before storing it in the database. When the user views those credential, decrypt the password before displaying it. Here's a little code snippet on how to use `EncryptionService`:
 
 ```
 SecureRandom random = new SecureRandom();

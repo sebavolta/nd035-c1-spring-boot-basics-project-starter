@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS CREDENTIALS (
     credentialid INT PRIMARY KEY auto_increment,
     url VARCHAR(100),
     username VARCHAR (30),
-    key VARCHAR,
     password VARCHAR,
+    credkey VARCHAR,
     userid INT,
     foreign key (userid) references USERS(userid)
 );
