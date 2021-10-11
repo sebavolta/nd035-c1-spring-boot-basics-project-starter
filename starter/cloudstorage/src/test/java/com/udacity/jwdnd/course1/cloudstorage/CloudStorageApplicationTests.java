@@ -1,5 +1,8 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
+import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -9,6 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
@@ -20,8 +24,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
 	WebDriverWait wait;
+
 	String noteTitle = "My title";
 	String noteDescription = "Some description";
+
+	String credentialUrl = "www.google.com";
+	String credentialUsername = "john";
+	String credentialPassword = "test1234";
+
+	@Autowired
+	CredentialService credentialService;
+
+	@Autowired
+	EncryptionService encryptionService;
 
 	@LocalServerPort
 	private int port;
@@ -70,6 +85,23 @@ class CloudStorageApplicationTests {
 		ResultPage resultPage = new ResultPage(driver);
 
 		Assertions.assertTrue(resultPage.getSuccessMessage());
+	}
+
+	private void createCredentialsHelper() {
+		this.createAccountAndLoginHelper();
+
+		HomePage homePage = new HomePage(driver);
+		homePage.createCredential(this.credentialUrl, this.credentialUsername, this.credentialPassword);
+
+		this.resultPageHelper();
+
+		driver.get("http://localhost:" + this.port + "/home");
+
+		homePage.createCredential(this.credentialUrl + "/abc", this.credentialUsername + "abc", this.credentialPassword + "abc");
+
+		this.resultPageHelper();
+
+		driver.get("http://localhost:" + this.port + "/home");
 	}
 
 	@Test
@@ -160,6 +192,61 @@ class CloudStorageApplicationTests {
 		driver.get("http://localhost:" + this.port + "/home");
 
 		Assertions.assertThrows(NoSuchElementException.class, () -> homePage.getNoteText());
+	}
+
+
+
+	@Test
+	public void createCredentialAndDisplay() {
+		this.createCredentialsHelper();
+		HomePage homePage = new HomePage(driver);
+
+		Credential cred1 = this.credentialService.getSingleCredential(1);
+		Credential cred2 = this.credentialService.getSingleCredential(2);
+
+		String encryptedPassword = this.encryptionService.encryptValue(this.credentialPassword, cred1.getCredkey());
+		String encryptedPassword2 = this.encryptionService.encryptValue(this.credentialPassword + "abc", cred2.getCredkey());
+
+
+		Assertions.assertEquals(this.credentialUrl, homePage.getCredentialsUrl().get(0).getText());
+		Assertions.assertEquals(this.credentialUrl + "/abc", homePage.getCredentialsUrl().get(1).getText());
+
+		Assertions.assertEquals(this.credentialUsername, homePage.getCredentialsUsername().get(0).getText());
+		Assertions.assertEquals(this.credentialUsername + "abc", homePage.getCredentialsUsername().get(1).getText());
+
+		Assertions.assertEquals(encryptedPassword, homePage.getCredentialsPassword().get(0).getText());
+		Assertions.assertEquals(encryptedPassword2, homePage.getCredentialsPassword().get(1).getText());
+	}
+
+	@Test
+	public void editCredentialAndDisplay() {
+		this.createCredentialsHelper();
+		HomePage homePage = new HomePage(driver);
+
+		Assertions.assertEquals(this.credentialPassword, homePage.getCredentialModalPassword(0));
+		homePage.closeCredModal();
+
+		Assertions.assertEquals(this.credentialPassword + "abc", homePage.getCredentialModalPassword(1));
+		homePage.closeCredModal();
+
+/*
+
+		homePage.editCredential("www.yahoo.com", "somename", "newpass", 0);
+
+		this.resultPageHelper();
+
+		driver.get("http://localhost:" + this.port + "/home");
+
+		homePage.editCredential("www.abc.com", "othername", "otherpass", 1);
+
+		this.resultPageHelper();
+
+		driver.get("http://localhost:" + this.port + "/home");
+
+		Credential cred1 = this.credentialService.getSingleCredential(1);
+		Credential cred2 = this.credentialService.getSingleCredential(2);*/
+
+
 	}
 
 }

@@ -6,6 +6,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import java.util.List;
+
 public class HomePage {
     WebDriver driver;
     @FindBy(id="logoutBtn")
@@ -25,6 +27,24 @@ public class HomePage {
 
     @FindBy(id = "saveNoteBtn")
     private WebElement saveNoteBtn;
+
+    @FindBy(id ="nav-credential-tab")
+    private WebElement navCredentialsTab;
+
+    @FindBy(id = "openCredentialModal")
+    private WebElement openCredentialModal;
+
+    @FindBy(id = "credential-url")
+    private WebElement credentialUrl;
+
+    @FindBy(id = "credential-username")
+    private WebElement credentialUsername;
+
+    @FindBy(id = "credential-password")
+    private WebElement credentialPassword;
+
+    @FindBy(id = "credentialSubmitBtn")
+    private WebElement credentialSubmitBtn;
 
     public HomePage(WebDriver webDriver) {
         this.driver = webDriver;
@@ -65,6 +85,58 @@ public class HomePage {
         deleteNoteBtn.click();
     }
 
+    public void createCredential(String url, String username, String password) {
+        this.navCredentialsTab.click();
+        this.openCredentialModal.click();
+        this.credentialUrl.sendKeys(url);
+        this.credentialUsername.sendKeys(username);
+        this.credentialPassword.sendKeys(password);
+        this.credentialSubmitBtn.click();
+    }
 
+    public List<WebElement> getCredentialsUrl() {
+        this.navCredentialsTab.click();
+        return this.driver.findElements(By.className("url-credential"));
+    }
+
+    public List<WebElement> getCredentialsUsername() {
+        this.navCredentialsTab.click();
+        return this.driver.findElements(By.className("username-credential"));
+
+    }
+
+    public List<WebElement> getCredentialsPassword() {
+        this.navCredentialsTab.click();
+        return this.driver.findElements(By.className("password-credential"));
+    }
+
+    public String getCredentialModalPassword(int index) {
+        this.navCredentialsTab.click();
+
+        List<WebElement> editCredentialsBtn = this.driver.findElements(By.className("edit-credential-btn"));
+        System.out.println(editCredentialsBtn);
+        editCredentialsBtn.get(index).click();
+
+
+        System.out.println(this.driver.findElement(By.id("credential-password")).getAttribute("value"));
+
+        return this.driver.findElement(By.id("credential-password")).getAttribute("value");
+    }
+
+    public void closeCredModal() {
+        this.driver.findElement(By.id("closeCredentialModal")).click();
+    }
+
+    public void editCredential(String editedUrl, String editedUsername, String editedPassword, int index) {
+        this.navCredentialsTab.click();
+
+        List<WebElement> editNotesBtn = this.driver.findElements(By.className("edit-note-btn"));
+        editNotesBtn.get(index).click();
+
+        this.credentialUrl.sendKeys(editedUrl);
+        this.credentialUsername.sendKeys(editedUsername);
+        this.credentialPassword.sendKeys(editedPassword);
+        this.saveNoteBtn.click();
+    }
 
 }

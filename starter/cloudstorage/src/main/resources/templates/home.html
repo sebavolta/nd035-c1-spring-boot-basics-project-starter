@@ -124,7 +124,7 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="nav-credential" role="tabpanel" aria-labelledby="nav-credential-tab">
-                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
+                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" id="openCredentialModal" onclick="showCredentialModal()">
                             + Add a New Credential
                         </button>
 
@@ -141,14 +141,14 @@
                                 <tbody th:if="${credentials}">
                                 <tr  th:each="credential : ${credentials}">
                                     <td>
-                                        <button type="button" class="btn btn-success"
+                                        <button type="button" class="btn btn-success edit-credential-btn"
                                                 th:onclick="javascript:showCredentialModal([[${credential.credentialId}]], [[${credential.url}]], [[${credential.username}]], [[${credential.decryptedPassword}]])">
                                             Edit</button>
                                         <a class="btn btn-danger" th:href="@{/delete-credential/{credentialId}(credentialId=${credential.credentialId})}">Delete</a>
                                     </td>
-                                    <th scope="row" th:text="${credential.url}"></th>
-                                    <td th:text="${credential.username}"></td>
-                                    <td th:text="${credential.password}"></td>
+                                    <th class="url-credential" scope="row" th:text="${credential.url}"></th>
+                                    <td class="username-credential" th:text="${credential.username}"></td>
+                                    <td class="password-credential" th:text="${credential.password}"></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -182,8 +182,8 @@
                                         </form>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="$('#credentialSubmit').click();">Save changes</button>
+                                        <button type="button" class="btn btn-secondary" id="closeCredentialModal" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" id="credentialSubmitBtn"  onclick="$('#credentialSubmit').click();">Save changes</button>
                                     </div>
                                 </div>
                             </div>

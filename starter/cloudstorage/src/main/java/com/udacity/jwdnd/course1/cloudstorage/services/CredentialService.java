@@ -40,6 +40,10 @@ public class CredentialService {
         this.credentialsMapper.insertCredential(encodedCredential);
     }
 
+    public Credential getSingleCredential(Integer credentialId) {
+        return this.credentialsMapper.getSingleCredential(credentialId);
+    }
+
     public void updateCredential(Credential credential) {
         Credential cred = this.credentialsMapper.getSingleCredential(credential.getCredentialId());
 
