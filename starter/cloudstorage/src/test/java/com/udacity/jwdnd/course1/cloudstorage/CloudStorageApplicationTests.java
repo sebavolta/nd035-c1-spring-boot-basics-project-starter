@@ -3,6 +3,7 @@ package com.udacity.jwdnd.course1.cloudstorage;
 import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
+import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -37,6 +38,9 @@ class CloudStorageApplicationTests {
 
 	@Autowired
 	EncryptionService encryptionService;
+
+	@Autowired
+	NoteService noteService;
 
 	@LocalServerPort
 	private int port;
@@ -154,6 +158,8 @@ class CloudStorageApplicationTests {
 	public void createNoteAndDisplay() {
 		this.createAccountAndLoginHelper();
 
+		this.noteService.deleteAllNotes();
+
 		HomePage homePage = new HomePage(driver);
 		homePage.createNote(this.noteTitle, this.noteDescription);
 
@@ -167,9 +173,18 @@ class CloudStorageApplicationTests {
 	@Test
 	public void editNote() {
 		this.createAccountAndLoginHelper();
-		this.createNoteAndDisplay();
+
+		this.noteService.deleteAllNotes();
+
+		driver.get("http://localhost:" + this.port + "/home");
 
 		HomePage homePage = new HomePage(driver);
+		homePage.createNote(this.noteTitle, this.noteDescription);
+
+		this.resultPageHelper();
+
+		driver.get("http://localhost:" + this.port + "/home");
+
 		homePage.editNote("edited", "edited");
 
 		this.resultPageHelper();
@@ -182,9 +197,18 @@ class CloudStorageApplicationTests {
 	@Test
 	public void deleteNote() {
 		this.createAccountAndLoginHelper();
-		this.createNoteAndDisplay();
+
+		this.noteService.deleteAllNotes();
 
 		HomePage homePage = new HomePage(driver);
+		homePage.createNote(this.noteTitle, this.noteDescription);
+
+		this.resultPageHelper();
+
+		driver.get("http://localhost:" + this.port + "/home");
+
+		System.out.println("amount " +  driver.findElements(By.className("delete-note-btn")));
+
 		homePage.deleteNote();
 
 		this.resultPageHelper();
@@ -199,6 +223,9 @@ class CloudStorageApplicationTests {
 	@Test
 	public void createCredentialAndDisplay() {
 		this.createCredentialsHelper();
+
+		driver.get("http://localhost:" + this.port + "/home");
+
 		HomePage homePage = new HomePage(driver);
 
 		Credential cred1 = this.credentialService.getSingleCredential(1);
@@ -221,21 +248,30 @@ class CloudStorageApplicationTests {
 	@Test
 	public void editCredentialAndDisplay() {
 		this.createCredentialsHelper();
+
+		driver.get("http://localhost:" + this.port + "/home");
+
 		HomePage homePage = new HomePage(driver);
 
 		Assertions.assertEquals(this.credentialPassword, homePage.getCredentialModalPassword(0));
 		homePage.closeCredModal();
 
+		try {
+			this.wait(1000);
+		} catch (Exception e) {
+			System.out.println("wait error " + e);
+		}
+
 		Assertions.assertEquals(this.credentialPassword + "abc", homePage.getCredentialModalPassword(1));
 		homePage.closeCredModal();
 
-/*
 
 		homePage.editCredential("www.yahoo.com", "somename", "newpass", 0);
 
 		this.resultPageHelper();
 
 		driver.get("http://localhost:" + this.port + "/home");
+
 
 		homePage.editCredential("www.abc.com", "othername", "otherpass", 1);
 
@@ -244,9 +280,40 @@ class CloudStorageApplicationTests {
 		driver.get("http://localhost:" + this.port + "/home");
 
 		Credential cred1 = this.credentialService.getSingleCredential(1);
-		Credential cred2 = this.credentialService.getSingleCredential(2);*/
+		Credential cred2 = this.credentialService.getSingleCredential(2);
 
 
+		String encryptedPassword = this.encryptionService.encryptValue(this.credentialPassword+"newpass", cred1.getCredkey());
+		String encryptedPassword2 = this.encryptionService.encryptValue(this.credentialPassword + "abc" + "otherpass", cred2.getCredkey());
+
+		Assertions.assertEquals("www.google.com www.yahoo.com", homePage.getCredentialsUrl().get(0).getText());
+		Assertions.assertEquals("www.google.com/abc www.abc.com", homePage.getCredentialsUrl().get(1).getText());
+
+		Assertions.assertEquals("john somename", homePage.getCredentialsUsername().get(0).getText());
+		Assertions.assertEquals("johnabc othername", homePage.getCredentialsUsername().get(1).getText());
+
+		Assertions.assertEquals(encryptedPassword, homePage.getCredentialsPassword().get(0).getText());
+		Assertions.assertEquals(encryptedPassword2, homePage.getCredentialsPassword().get(1).getText());
+	}
+
+	@Test
+	public void deleteCredential() {
+		this.createAccountAndLoginHelper();
+
+		this.credentialService.deleteAllCredentials();
+
+		HomePage homePage = new HomePage(driver);
+		homePage.createCredential(this.credentialUrl, this.credentialUsername, this.credentialPassword);
+
+		driver.get("http://localhost:" + this.port + "/home");
+
+		homePage.deleteCredential();
+
+		this.resultPageHelper();
+
+		driver.get("http://localhost:" + this.port + "/home");
+
+		Assertions.assertTrue(homePage.getCredentialsUrl().isEmpty());
 	}
 
 }

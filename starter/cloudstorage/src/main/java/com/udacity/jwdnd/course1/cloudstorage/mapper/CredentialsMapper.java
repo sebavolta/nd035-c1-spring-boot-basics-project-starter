@@ -26,5 +26,7 @@ public interface CredentialsMapper {
     @Delete("Delete From Credentials Where credentialid = #{credentialId}")
     int deleteCredential(Integer credentialId);
 
+    @Delete("Delete From Credentials")
+    int deleteAllCredentials();
 
 }

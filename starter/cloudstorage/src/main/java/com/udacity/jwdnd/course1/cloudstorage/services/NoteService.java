@@ -34,5 +34,8 @@ public class NoteService {
         this.notesMapper.deleteNote(note);
     }
 
+    public void deleteAllNotes() {
+        this.notesMapper.deleteAllNotes();
+    }
 
 }

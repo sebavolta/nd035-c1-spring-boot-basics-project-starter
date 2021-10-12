@@ -114,11 +114,7 @@ public class HomePage {
         this.navCredentialsTab.click();
 
         List<WebElement> editCredentialsBtn = this.driver.findElements(By.className("edit-credential-btn"));
-        System.out.println(editCredentialsBtn);
         editCredentialsBtn.get(index).click();
-
-
-        System.out.println(this.driver.findElement(By.id("credential-password")).getAttribute("value"));
 
         return this.driver.findElement(By.id("credential-password")).getAttribute("value");
     }
@@ -130,13 +126,20 @@ public class HomePage {
     public void editCredential(String editedUrl, String editedUsername, String editedPassword, int index) {
         this.navCredentialsTab.click();
 
-        List<WebElement> editNotesBtn = this.driver.findElements(By.className("edit-note-btn"));
-        editNotesBtn.get(index).click();
+        List<WebElement> editCredentialsBtn = this.driver.findElements(By.className("edit-credential-btn"));
+        editCredentialsBtn.get(index).click();
 
-        this.credentialUrl.sendKeys(editedUrl);
-        this.credentialUsername.sendKeys(editedUsername);
+        this.credentialUrl.sendKeys(this.credentialUrl.getText() + " " + editedUrl);
+        this.credentialUsername.sendKeys(this.credentialUsername.getText() + " " + editedUsername);
         this.credentialPassword.sendKeys(editedPassword);
-        this.saveNoteBtn.click();
+        this.credentialSubmitBtn.click();
+    }
+
+    public void deleteCredential() {
+        this.navCredentialsTab.click();
+
+        WebElement deleteCredentialsBtn = this.driver.findElement(By.className("delete-credential-btn"));
+        deleteCredentialsBtn.click();
     }
 
 }

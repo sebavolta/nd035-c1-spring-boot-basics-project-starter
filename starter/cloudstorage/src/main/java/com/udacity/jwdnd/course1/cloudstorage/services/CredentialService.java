@@ -22,7 +22,6 @@ public class CredentialService {
     public List<Credential> getCredentials(Integer userId) {
         List<Credential> credentials = this.credentialsMapper.getCredentials(userId).stream()
                 .map(credential -> {
-                    System.out.println("---------------------------- credent: " + credential);
                     String decrypted = this.encryptionService.decryptValue(credential.getPassword(), credential.getCredkey());
                     credential.setDecryptedPassword(decrypted);
                     return credential;
@@ -63,6 +62,10 @@ public class CredentialService {
         credential.setPassword(encryptedPassword);
 
         return credential;
+    }
+
+    public void deleteAllCredentials() {
+        this.credentialsMapper.deleteAllCredentials();
     }
 
 }
