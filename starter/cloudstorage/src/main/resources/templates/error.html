@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+<div class="row">
+    <div class="col-md-12">
+        <h3>Something went wrong!</h3>
+        <div th:if="${invalid}">
+            <p th:text="${invalid}"></p>
+        </div>
+
+        <div th:if="${problem}">
+            <p th:text="${problem}"></p>
+        </div>
+
+        <a th:href="@{/home}">Please go back to the homepage</a>
+    </div>
+</div>
+
+
+
+</body>
+</html>

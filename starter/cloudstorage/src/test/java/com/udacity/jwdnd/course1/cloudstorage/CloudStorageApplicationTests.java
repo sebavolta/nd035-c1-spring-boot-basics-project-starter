@@ -11,18 +11,14 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
-import java.time.Duration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CloudStorageApplicationTests {
 	WebDriverWait wait;
 
@@ -109,18 +105,21 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(1)
 	public void getLoginPage() {
 		driver.get("http://localhost:" + this.port + "/login");
 		Assertions.assertEquals("Login", driver.getTitle());
 	}
 
 	@Test
+	@Order(2)
 	public void getSignupPage() {
 		driver.get("http://localhost:" + this.port + "/signup");
 		Assertions.assertEquals("Sign Up", driver.getTitle());
 	}
 
 	@Test
+	@Order(3)
 	public void unauthorizedLogin() {
 		driver.get("http://localhost:" + this.port + "/login");
 
@@ -135,6 +134,7 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(4)
 	public void authorizedLogin() {
 		this.createAccountAndLoginHelper();
 
@@ -155,6 +155,7 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(5)
 	public void createNoteAndDisplay() {
 		this.createAccountAndLoginHelper();
 
@@ -171,6 +172,7 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(6)
 	public void editNote() {
 		this.createAccountAndLoginHelper();
 
@@ -195,6 +197,7 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(7)
 	public void deleteNote() {
 		this.createAccountAndLoginHelper();
 
@@ -221,6 +224,7 @@ class CloudStorageApplicationTests {
 
 
 	@Test
+	@Order(8)
 	public void createCredentialAndDisplay() {
 		this.createCredentialsHelper();
 
@@ -246,6 +250,7 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(9)
 	public void editCredentialAndDisplay() {
 		this.createCredentialsHelper();
 
@@ -297,6 +302,7 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(10)
 	public void deleteCredential() {
 		this.createAccountAndLoginHelper();
 
